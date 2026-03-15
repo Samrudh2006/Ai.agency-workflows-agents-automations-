@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🤖 Nexus — AI Agency Blueprint
+![Nexus AI Agency Banner](assets/agency_banner.png)
+
+# <img src="assets/agency_logo.png" width="30" height="30" align="top" /> Nexus — AI Agency Blueprint
 **Your Complete toolkit to build, sell, and scale AI-Powered Workflows, Voice Agents & Autonomous Solutions**
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Inter&weight=600&size=24&pause=1000&color=3B82F6&center=true&vCenter=true&width=600&lines=Automate+The+Boring+Stuff;Deploy+AI+Voice+Agents;Scale+With+No-Code+Workflows;Launch+Your+Own+AI+Agency)](https://git.io/typing-svg)

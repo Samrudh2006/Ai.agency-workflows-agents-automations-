@@ -1,0 +1,80 @@
+{
+    "name": "Nexus AI - Omnichannel Data Extraction",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": "MAKE_WEBHOOK_URL_HERE"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0,
+                    "name": "Catch Incoming WhatsApp Payload"
+                }
+            }
+        },
+        {
+            "id": 2,
+            "module": "http:ActionMakeRequest",
+            "version": 3,
+            "parameters": {
+                "url": "https://api.openai.com/v1/chat/completions",
+                "method": "post",
+                "headers": [
+                    {
+                        "name": "Authorization",
+                        "value": "Bearer {{YOUR_OPENAI_KEY}}"
+                    },
+                    {
+                        "name": "Content-Type",
+                        "value": "application/json"
+                    }
+                ],
+                "bodyType": "raw",
+                "body": "{\"model\": \"gpt-4o-mini\", \"messages\": [{\"role\": \"system\", \"content\": \"Extract the intent, urgency, and specific dates requested from the user's message. Output JSON strictly formatted as {\"intent\": \"\", \"urgency\": 0, \"dates\": []}\"}, {\"role\": \"user\", \"content\": \"{{1.body.message}}\"}], \"response_format\": { \"type\": \"json_object\" }}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0,
+                    "name": "GPT-4o JSON Extraction"
+                }
+            }
+        },
+        {
+            "id": 3,
+            "module": "airtable:ActionCreateARecord",
+            "version": 2,
+            "parameters": {
+                "baseId": "YOUR_AIRTABLE_BASE",
+                "tableId": "YOUR_AIRTABLE_TABLE"
+            },
+            "mapper": {
+                "Intent": "{{2.data.choices[0].message.content.intent}}",
+                "Urgency": "{{2.data.choices[0].message.content.urgency}}",
+                "Requested Dates": "{{2.data.choices[0].message.content.dates}}",
+                "Raw Message": "{{1.body.message}}"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0,
+                    "name": "Log to Database"
+                }
+            }
+        }
+    ],
+    "metadata": {
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "sequential": false,
+            "confidential": true
+        }
+    }
+}

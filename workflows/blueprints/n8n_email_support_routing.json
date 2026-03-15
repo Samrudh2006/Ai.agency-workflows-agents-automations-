@@ -1,0 +1,123 @@
+{
+    "name": "Nexus AI - Email Support RAG Triage",
+    "nodes": [
+        {
+            "parameters": {
+                "path": "incoming-ticket",
+                "responseMode": "lastNode"
+            },
+            "name": "Zendesk Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "model": "gpt-4o-mini",
+                "prompt": "You are a customer support triage AI. Read the incoming email: {{$json.body.ticket.description}}\n\nExtract the core issue and determine if it requires human intervention (true/false)."
+            },
+            "name": "OpenAI Triage",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "boolean": [
+                        {
+                            "value1": "={{$node[\"OpenAI Triage\"].json[\"requires_human\"]}}",
+                            "value2": true
+                        }
+                    ]
+                }
+            },
+            "name": "Needs Human?",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 1,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "update",
+                "ticketId": "={{$node[\"Zendesk Webhook\"].json.body.ticket.id}}",
+                "status": "open",
+                "priority": "high",
+                "assigneeId": "YOUR_HUMAN_AGENT_ID"
+            },
+            "name": "Escalate Ticket",
+            "type": "n8n-nodes-base.zendesk",
+            "typeVersion": 1,
+            "position": [
+                900,
+                200
+            ]
+        },
+        {
+            "parameters": {
+                "operation": "reply",
+                "ticketId": "={{$node[\"Zendesk Webhook\"].json.body.ticket.id}}",
+                "body": "={{$node[\"OpenAI Triage\"].json[\"ai_response\"]}}"
+            },
+            "name": "Auto-Respond via Semantic Search",
+            "type": "n8n-nodes-base.zendesk",
+            "typeVersion": 1,
+            "position": [
+                900,
+                400
+            ]
+        }
+    ],
+    "connections": {
+        "Zendesk Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "OpenAI Triage",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "OpenAI Triage": {
+            "main": [
+                [
+                    {
+                        "node": "Needs Human?",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Needs Human?": {
+            "main": [
+                [
+                    {
+                        "node": "Escalate Ticket",
+                        "type": "main",
+                        "index": 0
+                    }
+                ],
+                [
+                    {
+                        "node": "Auto-Respond via Semantic Search",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {}
+}

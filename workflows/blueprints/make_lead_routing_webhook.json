@@ -1,0 +1,91 @@
+{
+  "name": "Nexus AI - Inbound Voice Lead Routing",
+  "flow": [
+    {
+      "id": 1,
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "parameters": {
+        "hook": "YOUR_MAKE_WEBHOOK_URL_HERE"
+      },
+      "metadata": {
+        "designer": {
+          "x": 0,
+          "y": 0,
+          "name": "Vapi/Bland Webhook Receiver"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "module": "json:ParseJSON",
+      "version": 1,
+      "parameters": {
+        "type": ""
+      },
+      "mapper": {
+        "json": "{{1.body}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 300,
+          "y": 0,
+          "name": "Extract Call Data"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "module": "hubspotcrm:CreateContact",
+      "version": 1,
+      "parameters": {},
+      "mapper": {
+        "email": "{{2.extracted_lead.email}}",
+        "firstname": "{{2.extracted_lead.first_name}}",
+        "lastname": "{{2.extracted_lead.last_name}}",
+        "phone": "{{2.extracted_lead.phone_number}}",
+        "company": "{{2.extracted_lead.company_name}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 0,
+          "name": "Create or Update CRM Lead"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "module": "slack:CreateMessage",
+      "version": 6,
+      "parameters": {
+        "channelType": "public_channel",
+        "channelId": "YOUR_SLACK_CHANNEL_ID"
+      },
+      "mapper": {
+        "text": "*🚨 New AI Qualified Lead!*\n*Name:* {{2.extracted_lead.first_name}} {{2.extracted_lead.last_name}}\n*Phone:* {{2.extracted_lead.phone_number}}\n*Intent:* {{2.extracted_lead.intent_category}} (Score: {{2.extracted_lead.urgency_score}}/10)\n\n*AI Summary:*\n> {{2.ai_analysis.call_summary}}\n\n*Next Action:* {{2.ai_analysis.next_action_recommended}}"
+      },
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 0,
+          "name": "Notify Sales Team"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    }
+  }
+}

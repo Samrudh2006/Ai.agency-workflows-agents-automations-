@@ -99,24 +99,47 @@
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack & Supported Platforms
 
-### AI Models & LLMs
-![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white) 
-![Anthropic](https://img.shields.io/badge/Anthropic-000000?style=for-the-badge&logo=anthropic&logoColor=white) 
-![Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white) 
-
-### Voice AI Platforms
-![Vapi](https://img.shields.io/badge/Vapi.ai-323330?style=for-the-badge) 
-![Bland AI](https://img.shields.io/badge/Bland_AI-430098?style=for-the-badge) 
-![ElevenLabs](https://img.shields.io/badge/ElevenLabs-000000?style=for-the-badge) 
-
-### Automation & No-Code
+### ⚡ Automation & No-Code
 ![Make.com](https://img.shields.io/badge/Make.com-FF0000?style=for-the-badge&logo=make&logoColor=white) 
-![Zapier](https://img.shields.io/badge/Zapier-FF4A00?style=for-the-badge&logo=zapier&logoColor=white) 
 ![n8n](https://img.shields.io/badge/n8n-FF6D5A?style=for-the-badge&logo=n8n&logoColor=white) 
+![Zapier](https://img.shields.io/badge/Zapier-FF4A00?style=for-the-badge&logo=zapier&logoColor=white) 
 
-### Infrastructure & Custom Code
+### 📞 Voice & Conversational AI
+![Vapi](https://img.shields.io/badge/Vapi.ai-323330?style=for-the-badge) 
+![ElevenLabs](https://img.shields.io/badge/ElevenLabs-000000?style=for-the-badge) 
+![Retell AI](https://img.shields.io/badge/Retell_AI-000000?style=for-the-badge) 
+![Synthflow](https://img.shields.io/badge/Synthflow-000000?style=for-the-badge) 
+![Voiceflow](https://img.shields.io/badge/Voiceflow-1C64F2?style=for-the-badge) 
+![Relevance AI](https://img.shields.io/badge/Relevance_AI-6F31E8?style=for-the-badge) 
+![Bland AI](https://img.shields.io/badge/Bland_AI-430098?style=for-the-badge) 
+
+### 🧠 Top 10 Commercial (Paid) LLMs
+![GPT-4o](https://img.shields.io/badge/GPT--4o-412991?style=for-the-badge&logo=openai&logoColor=white)
+![Claude 3.5 Sonnet](https://img.shields.io/badge/Claude_3.5_Sonnet-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
+![Claude 3 Opus](https://img.shields.io/badge/Claude_3_Opus-1E1E1E?style=for-the-badge&logo=anthropic&logoColor=white)
+![Gemini 1.5 Pro](https://img.shields.io/badge/Gemini_1.5_Pro-8E75B2?style=for-the-badge&logo=google&logoColor=white)
+![Gemini 1.5 Flash](https://img.shields.io/badge/Gemini_1.5_Flash-1A73E8?style=for-the-badge&logo=google&logoColor=white)
+![Command R+](https://img.shields.io/badge/Command_R+-39594D?style=for-the-badge)
+![Mistral Large](https://img.shields.io/badge/Mistral_Large-F54E42?style=for-the-badge)
+![GPT-4 Turbo](https://img.shields.io/badge/GPT--4_Turbo-10A37F?style=for-the-badge&logo=openai&logoColor=white)
+![Claude 3 Haiku](https://img.shields.io/badge/Claude_3_Haiku-F5B7B1?style=for-the-badge&logo=anthropic&logoColor=white)
+![Jurassic-2](https://img.shields.io/badge/AI21_Jurassic--2-0052FF?style=for-the-badge)
+
+### 🌍 Top 10 Open Source (Free) LLMs
+![Llama 3 (Meta)](https://img.shields.io/badge/Llama_3-0467DF?style=for-the-badge&logo=meta&logoColor=white)
+![Mixtral 8x22B](https://img.shields.io/badge/Mixtral_8x22B-F54E42?style=for-the-badge)
+![Mistral Nemo](https://img.shields.io/badge/Mistral_Nemo-FF7043?style=for-the-badge)
+![Qwen 2.5](https://img.shields.io/badge/Qwen_2.5-4B0082?style=for-the-badge)
+![Gemma 2](https://img.shields.io/badge/Gemma_2-1A73E8?style=for-the-badge&logo=google&logoColor=white)
+![Phi-3 (Microsoft)](https://img.shields.io/badge/Phi--3-0078D4?style=for-the-badge&logo=microsoft&logoColor=white)
+![DeepSeek V2](https://img.shields.io/badge/DeepSeek_V2-4D90FE?style=for-the-badge)
+![Nemotron-4 (Nvidia)](https://img.shields.io/badge/Nemotron--4-76B900?style=for-the-badge&logo=nvidia&logoColor=white)
+![Command R](https://img.shields.io/badge/Command_R-39594D?style=for-the-badge)
+![Falcon 180B](https://img.shields.io/badge/Falcon_180B-8E44AD?style=for-the-badge)
+
+### 🏗️ Infrastructure & Custom Code
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white) 
 ![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white) 
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) 

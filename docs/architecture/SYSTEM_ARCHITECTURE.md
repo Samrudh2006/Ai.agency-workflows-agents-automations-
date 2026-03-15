@@ -1,180 +1,153 @@
 <div align="center">
 
-# 🏛️ Full System Architecture
-**The Master Diagram for Nexus AI Agency Client Deployments**
+# 🏛️ Agency Reference Architectures
+**Standard Blueprints for High-Ticket AI Automation Deployments**
 
 </div>
 
 <br />
 
-The following architecture defines how we build robust, scalable, and responsive AI Platforms (like Web Apps, Automated Dashboards, and Voice Assistants) for our clients.
+As an AI Automation Agency, we do not build a single monolithic product. We deploy modular, highly-customized solutions for multiple clients across different industries. 
+
+Here are the three master blueprints we use to deliver six-figure value to our clients securely and reliably.
 
 ---
 
-## 🗺️ Master Architecture Flow
+## 📞 Blueprint 1: Inbound Voice AI Receptionist
+*Used for: Real Estate, Home Services, Medical Clinics, Legal Firms.*
+
+This architecture replaces traditional answering services. It guarantees zero missed calls, instant qualification, and direct booking into the client's calendar.
 
 ```text
-┌─────────────────────────────────────────────────────────────────────┐
-│                          CLIENTS                                     │
-│    ┌──────────────┐   ┌──────────────┐   ┌──────────────┐          │
-│    │   Client      │   │  Manager     │   │   Support    │          │
-│    │   Browser     │   │  Browser     │   │   Browser    │          │
-│    └──────┬───────┘   └──────┬───────┘   └──────┬───────┘          │
-│           │                  │                   │                   │
-│           │           ┌──────────────┐           │                   │
-│           │           │    Admin     │           │                   │
-│           │           │   Browser    │           │                   │
-│           │           └──────┬───────┘           │                   │
-└───────────┼──────────────────┼───────────────────┼──────────────────┘
-            │                  │                   │
-            ▼                  ▼                   ▼
-┌─────────────────────────────────────────────────────────────────────┐
-│                  FRONTEND (React + Vite + TypeScript)                 │
-│                                                                       │
-│  ┌─────────────┐ ┌──────────────┐ ┌────────────┐ ┌──────────────┐  │
-│  │ Landing Page │ │ Client       │ │ Manager    │ │ Support      │  │
-│  │ + Auth      │ │ Dashboard    │ │ Dashboard  │ │ Dashboard    │  │
-│  │ + Login     │ │ + Analytics  │ │ + Team     │ │ + Chat Logs  │  │
-│  │ + Register  │ │ + Settings   │ │ + Billing  │ │ + Escalation │  │
-│  └─────────────┘ └──────────────┘ └────────────┘ └──────────────┘  │
-│                                                                       │
-│  ┌─────────────┐ ┌──────────────┐ ┌────────────┐ ┌──────────────┐  │
-│  │ Admin       │ │ Chat +       │ │ Ticket +   │ │ Voice        │  │
-│  │ Dashboard   │ │ Socket.IO    │ │ Helpdesk   │ │ Assistant    │  │
-│  │ + Users     │ │ Real-time    │ │ Threads    │ │ (OpenAI LLM) │  │
-│  │ + Analytics │ │ Messaging    │ │ Replies    │ │ STT + TTS    │  │
-│  └─────────────┘ └──────────────┘ └────────────┘ └──────────────┘  │
-│                                                                       │
-│  ┌─────────────────────────────────────────────────────────────────┐ │
-│  │ Shared: Analytics │ Webhooks │ API Logs │ Users │ Documents   │ │
-│  │ Notifications │ Billing │ Settings │ Profile │ Training Data    │ │
-│  └─────────────────────────────────────────────────────────────────┘ │
-│                                                                       │
-│  Tech: React 18 │ Radix UI + shadcn/ui │ Tailwind CSS │ TanStack   │
-│  Query │ React Router DOM │ Framer Motion │ Recharts │ Zod          │
-│                                                                       │
-│  Hosted on: Vercel (SPA with rewrites)                               │
-└──────────┬──────────────────┬──────────────────┬────────────────────┘
-           │ HTTPS / REST     │ WebSocket        │ Direct Client
-           │                  │ (Socket.IO)      │
-           ▼                  ▼                  ▼
-┌─────────────────────────────────────┐  ┌──────────────────────────┐
-│    BACKEND API (Express + Node.js)   │  │  SUPABASE (Auth + DB)    │
-│    Single Monolith Service           │  │                          │
-│                                       │  │  - User authentication  │
-│  ┌─────────────────────────────────┐ │  │  - Session management   │
-│  │          API ROUTES             │ │  │  - Profile sync         │
-│  │                                 │ │  │  - Role management      │
-│  │  /api/auth/*     Auth + OTP     │ │  │  - RLS policies         │
-│  │  /api/users/*    Profile + RBAC │ │  │                          │
-│  │  /api/ai/*       AI advisory    │ │  │  PostgreSQL (managed)   │
-│  │  /api/chat/*     Chat + Voice   │ │  │  Auth (managed)         │
-│  │  /api/forum/*    Posts + Comment│ │  │                          │
-│  │  /api/documents/*  Upload/Verify│ │  │  Free tier              │
-│  │  /api/billing/*  Invoices       │ │  └──────────────────────────┘
-│  │  /api/analytics/*  Dashboards   │ │
-│  │  /api/notifications/*  Alerts   │ │  ┌──────────────────────────┐
-│  │  /health          Health check  │ │  │  CURATED DATASETS        │
-│  └─────────────────────────────────┘ │  │  (src/data/*)            │
-│                                       │  │                          │
-│  ┌───────────────────────────────────────┐  │  - App Settings         │
-│  │            CORE MODULES               │  │  - Theme Constants      │
-│  │                                       │  │  - Feature Flags        │
-│  │  ┌───────────────┐ ┌───────────────┐ │  │  - Navigation links     │
-│  │  │ AI Automation │ │ Chat Engine   │ │  │  - Standard Pricing     │
-│  │  │ Engine        │ │               │ │  │  - Sys Prompt Templates │
-│  │  │               │ │ - AI chat     │ │  │  - Static Asset URLs    │
-│  │  │ - RAG Routing │ │ - Message     │ │  │  - Error Definitions    │
-│  │  │ - Webhooks    │ │   history     │ │  │  - Supported Languages  │
-│  │  │   Extraction  │ │ - Voice STT   │ │  │  - Country Dial Codes   │
-│  │  │ - JSON Generat│ │ - Voice TTS   │ │  │                          │
-│  │  │   Pipeline    │ │ - Session mgmt│ │  │  Resolved client-side   │
-│  │  │ - Fallbacks   │ │               │ │  │  for fast lookups       │
-│  │  │   Control     │ │               │ │  └──────────────────────────┘
-│  │  └───────┬───────┘ └───────┬───────┘ │
-│  │          │                 │          │
-│  │  ┌───────┴───────┐ ┌──────┴────────┐ │
-│  │  │ Document      │ │ Ticketing &   │ │
-│  │  │ Management    │ │ Helpdesk      │ │
-│  │  │               │ │               │ │
-│  │  │ - Upload PDF  │ │ - Ticket CRUD │ │
-│  │  │ - Chunking    │ │ - Notes       │ │
-│  │  │ - Embeddings  │ │ - Agent Assign│ │
-│  │  │ - Vector DB   │ │ - SLA Tracking│ │
-│  │  └───────────────┘ └───────────────┘ │
-│  │                                       │
-│  │  ┌───────────────┐ ┌───────────────┐ │
-│  │  │ Notification  │ │ Analytics     │ │
-│  │  │ Engine        │ │ Engine        │ │
-│  │  │               │ │               │ │
-│  │  │ - Email       │ │ - Role-based  │ │
-│  │  │   (Nodemailer)│ │   dashboards  │ │
-│  │  │ - SMS (Twilio)│ │ - Activity    │ │
-│  │  │ - In-app      │ │   tracking    │ │
-│  │  │ - Socket.IO   │ │ - 7d/30d/90d  │ │
-│  │  │   real-time   │ │   timeframes  │ │
-│  │  └───────────────┘ └───────────────┘ │
-│  └───────────────────────────────────────┘ │
-│                                       │
-│  ┌─────────────────────────────────┐ │
-│  │         MIDDLEWARE STACK        │ │
-│  │                                 │ │
-│  │  Helmet → CORS → Rate Limiter  │ │
-│  │  → JWT Auth → RBAC → Validator │ │
-│  │  → Error Handler → Logger      │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  Tech: Express 4.18 │ Prisma ORM │ JWT │ Bcrypt │ Socket.IO    │
-│  Winston Logger │ express-validator │ Multer │ UUID             │
-│                                                                   │
-│  Hosted on: Railway / VPS (~$5-10/mo)                            │
-└──────────┬───────────────────┬──────────────────┬───────────────┘
-           │                   │                  │
-           ▼                   ▼                  ▼
-┌──────────────────┐ ┌─────────────────┐  ┌────────────────────────┐
-│  SQLite / Prisma │ │  Socket.IO      │  │  OpenAI / Anthropic    │
-│  (Primary DB)    │ │  (Real-time)    │  │  (Core Engine)         │
-│                  │ │                 │  │                        │
-│  - Users         │ │  - Chat rooms   │  │  - Chat completions    │
-│  - Client/       │ │  - Presence     │  │    (gpt-4o-mini)       │
-│    Manager/      │ │  - Live notifs  │  │  - Speech-to-text      │
-│    Support       │ │  - JWT auth     │  │    (Deepgram Nova-2)   │
-│    Profiles      │ │  - User rooms   │  │  - Text-to-speech      │
-│  - Documents     │ │                 │  │    (ElevenLabs)        │
-│  - Chat Messages │ │  Embedded in    │  │  - Structured Outputs  │
-│  - Tickets       │ │  Express server │  │    (JSON extractions)  │
-│  - Embeddings    │ │                 │  │                        │
-│  - Notifications │ │                 │  │  Pay-per-use APIs      │
-│  - Activities    │ │                 │  │                        │
-│  - Audit Logs    │ └─────────────────┘  └────────────────────────┘
-│  - AI Recs       │
-│  - OTP Codes     │  ┌─────────────────┐  ┌────────────────────────┐
-│                  │  │  Twilio         │  │  Nodemailer            │
-│  SQLite (dev)    │  │  (SMS/WhatsApp) │  │  (Email SMTP)          │
-│  → Postgres      │  │                 │  │                        │
-│  (production)    │  │  - OTP delivery │  │  - OTP delivery        │
-│                  │  │  - Alerts       │  │  - Notifications       │
-│  Free (SQLite)   │  │  Pay-per-use    │  │  Free / SMTP plan      │
-└──────────────────┘  └─────────────────┘  └────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                   THE VOICE PIPELINE                        │
+│                                                             │
+│   ┌─────────────┐        ┌───────────────┐                  │
+│   │  Customer   │ 1.Call │ Twilio /      │                  │
+│   │  (Phone)    ├───────►│ GoHighLevel   │                  │
+│   └──────┬──────┘        │ (SIP Trunk)   │                  │
+│          │               └──────┬────────┘                  │
+│          │                      │ 2. Route Voice Stream     │
+│          │                      ▼                           │
+│          │               ┌───────────────┐                  │
+│          │  3. Converse  │ Vapi /        │                  │
+│          └───────────────┤ Bland AI      │                  │
+│             (Ultra-Low   │ (Voice Engine)│                  │
+│              Latency)    └───┬───────┬───┘                  │
+│                              │       │                      │
+│        4. LLM Generation     │       │ 5. Trigger Webhook   │
+│        (OpenAI/Anthropic)    ▼       │    on "End Call"     │
+│      ┌───────────────────────┴┐      │                      │
+│      │ System Prompt:         │      │                      │
+│      │ "You are a receptionist│      ▼                      │
+│      │  for [Client]. Qualify │ ┌───────────────┐           │
+│      │  and book leads..."    │ │ Make.com / n8n│           │
+│      └────────────────────────┘ │ (Webhook Catch)           │
+│                                 └───┬───────┬───┘           │
+│                                     │       │               │
+│                      6. Save Lead   │       │ 7. Book Slot  │
+│                      ┌──────────────▼┐      │               │
+│                      │ Client CRM    │      ▼               │
+│                      │ (HubSpot/GHL) │  ┌───────────────┐   │
+│                      └───────────────┘  │ Cal.com /     │   │
+│                                         │ Google Cal    │   │
+│                                         └───────────────┘   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## 🏗️ Architecture Decisions
-
-### Monolith vs Microservices: MONOLITH
-| Factor | Monolith (Chosen) | Microservices |
-| :--- | :--- | :--- |
-| **Team size** | ✅ Perfect for lean agency teams | ❌ Overkill |
-| **Dev speed** | ✅ Fast iteration for clients | ❌ Inter-service overhead |
-| **Deployment**| ✅ Single container | ❌ K8s/Docker Compose |
-| **Debugging** | ✅ Single log stream (Winston) | ❌ Distributed tracing |
-| **Cost** | ✅ ~$5-10/mo to host | ❌ $50-100/mo minimum |
-
-### Database Strategy: SQLite → PostgreSQL
-| Why SQLite (Dev) | Why PostgreSQL (Prod) |
-| :--- | :--- |
-| Zero-config local setup | ACID for concurrent writes |
-| File-based, no server needed | Full-text search built-in |
-| Fast for single-user development | Built-in Auth hooks via Supabase |
+**Agency Value Prop:** "A human receptionist costs $40k/yr and misses calls when busy. Our Voice AI costs $500/mo, scales infinitely during busy hours, and natively updates your CRM."
 
 ---
-*(End of Architecture Overview)*
+
+## 💬 Blueprint 2: Omnichannel RAG Support Chatbot
+*Used for: B2B SaaS, E-Commerce, Helpdesks, Internal HR.*
+
+This architecture ingests a client's specific company data (PDFs, Notion docs, Zendesk wikis) and allows an AI to answer questions deterministically without hallucinating.
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                 THE RAG (RETRIEVAL) PIPELINE                │
+│                                                             │
+│  ┌──────────────┐     ┌──────────────┐    ┌──────────────┐  │
+│  │ Website Chat │     │ WhatsApp     │    │ Slack/Teams  │  │
+│  │ Widget       │     │ Business API │    │ Internal Bot │  │
+│  └───────┬──────┘     └──────┬───────┘    └──────┬───────┘  │
+│          │                   │                   │          │
+│          └───────────────────┼───────────────────┘          │
+│              1. User Query   │                              │
+│                              ▼                              │
+│                      ┌───────────────┐                      │
+│                      │ API Gateway   │                      │
+│                      │ (Node.js/Edge)│                      │
+│                      └───────┬───────┘                      │
+│                              │                              │
+│        2. Create Embedding   │                              │
+│        (text-embedding-v3)   ▼                              │
+│                      ┌───────────────┐                      │
+│                      │ Vector DB     │                      │
+│                      │ (Supabase/    │                      │
+│                      │  Pinecone)    │                      │
+│                      └───────┬───────┘                      │
+│                              │                              │
+│    3. Retrieve Top-K         │                              │
+│       Relevant Chunks        ▼                              │
+│                      ┌───────────────┐                      │
+│                      │ OpenAI /      │                      │
+│                      │ Anthropic     │                      │
+│                      │ (LLM Engine)  │                      │
+│                      └───────┬───────┘                      │
+│                              │                              │
+│        4. LLM response       │                              │
+│           sent back to user  ▼                              │
+│                      ┌───────────────┐                      │
+│                      │ Analytics &   │                      │
+│                      │ Handoff Dash  │                      │
+│                      │ (Langfuse/DB) │                      │
+│                      └───────────────┘                      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Agency Value Prop:** "Deflect 60% of Tier-1 support tickets instantly. The AI only uses answers found in your official documentation."
+
+---
+
+## ⚙️ Blueprint 3: The Internal Agency Tech Stack
+*Used for: Operating our Agency efficiently to maintain high profit margins.*
+
+How we run our own business, capture leads, and continuously deliver value without scaling headcount linearly.
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│               AGENCY INTERNAL OPERATIONS                     │
+│                                                             │
+│  ┌──────────────┐       ┌──────────────┐                    │
+│  │ Agency       │       │ Cold Email   │                    │
+│  │ Website      │       │ (Instantly/  │                    │
+│  │ (Framer/Webf)│       │ Smartlead)   │                    │
+│  └───────┬──────┘       └──────┬───────┘                    │
+│          │                     │                            │
+│          └─────────────────────┼────────────────────┐       │
+│                                │                    │       │
+│                                ▼                    ▼       │
+│                        ┌───────────────┐    ┌─────────────┐ │
+│                        │ Stripe / Host │    │ Agency CRM  │ │
+│                        │ (Billing)     │    │ (Airtable/  │ │
+│                        └───────┬───────┘    │  HubSpot)   │ │
+│                                │            └─────────────┘ │
+│                                ▼                            │
+│                        ┌───────────────┐                    │
+│                        │ Internal n8n/ │                    │
+│                        │ Make.com      │                    │
+│                        └───────┬───────┘                    │
+│                                │                            │
+│        ┌───────────────────────┼────────────────────────┐   │
+│        ▼                       ▼                        ▼   │
+│ ┌──────────────┐       ┌──────────────┐         ┌─────────┐ │
+│ │ Slack Notifs │       │ Client Portal│         │ Setup   │ │
+│ │ (New Lead /  │       │ (Notion/     │         │ GitHub  │ │
+│ │ Payment won) │       │  Softr)      │         │ Repo    │ │
+│ └──────────────┘       └──────────────┘         └─────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Agency Value Prop:** "We practice what we preach. We automate our onboarding, billing, and QA so our engineers spend 100% of their time building value for clients."

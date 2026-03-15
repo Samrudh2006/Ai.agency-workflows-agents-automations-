@@ -1,77 +1,74 @@
 <div align="center">
 
-# 🎙️ Voice & Chat Pipeline
-**How we process audio and text into intelligent agent responses.**
+# 🎙️ Ultra-Low Latency Voice Agent Pipeline
+**The architecture required to make an AI sound human on the phone.**
 
 </div>
 
 <br />
 
-This document outlines the exact orchestration flow we use to handle multi-modal inputs (Text and Voice) using external APIs (like OpenAI, Sarvam, or Vapi).
+The biggest friction point in selling Voice AI to clients is latency. If the AI takes 3 seconds to respond, the human caller will interrupt it, get confused, and hang up. 
+
+Our agency guarantees **sub-800ms response times** by utilizing the following distributed architecture.
 
 ---
 
-## 🌊 Pipeline Orchestration Flow
+## ⚡ The Sub-800ms Architecture Flow
+
+To achieve human-like conversation, we decouple the process into three distinct, specialized microservices managed via WebSockets.
 
 ```text
-┌─────────────────────────────────────────────────────────┐
-│              CHAT & VOICE PIPELINE                        │
-│                                                           │
-│  Input: {user_id, message|audio, mode, language}         │
-│                                                           │
-│  ┌─────────────────────────────────────────────┐        │
-│  │ Mode 1: TEXT CHAT (LLM Routing)             │        │
-│  │                                               │        │
-│  │  1. Receive user message                     │        │
-│  │  2. Build role-aware system prompt:          │        │
-│  │     - User: Simple language, practical       │        │
-│  │     - Admin: Technical, verbose              │        │
-│  │  3. Include chat history (last 10 messages)  │        │
-│  │  4. Call AI API (OpenAI / Anthropic)         │        │
-│  │     - Temperature: 0.3 (deterministic)       │        │
-│  │  5. Store message + response in DB           │        │
-│  │  6. Return AI response to client             │        │
-│  └───────────────────┬─────────────────────────┘        │
-│                      ▼                                    │
-│  ┌─────────────────────────────────────────────┐        │
-│  │ Mode 2: VOICE INPUT (Speech-to-Text)        │        │
-│  │                                               │        │
-│  │  1. User records audio in browser            │        │
-│  │  2. Audio sent to POST /api/chat/voice       │        │
-│  │  3. Forward to Whisper/Deepgram STT API      │        │
-│  │  4. Return text transcription                │        │
-│  │  5. Feed into text chat pipeline             │        │
-│  └─────────────────────────────────────────────┘        │
-│                                                           │
-│  ┌─────────────────────────────────────────────┐        │
-│  │ Mode 3: VOICE OUTPUT (Text-to-Speech)       │        │
-│  │                                               │        │
-│  │  1. AI response text generated               │        │
-│  │  2. Call TTS API (ElevenLabs / OpenAI)       │        │
-│  │  3. Configure: voice_id, pace, emphasis      │        │
-│  │  4. Return audio stream/base64 to frontend   │        │
-│  │  5. Auto-play in browser                     │        │
-│  └─────────────────────────────────────────────┘        │
-│                                                           │
-│  ┌─────────────────────────────────────────────┐        │
-│  │ Mode 4: REAL-TIME WEBSOCKET (Socket.IO)     │        │
-│  │                                               │        │
-│  │  1. JWT authenticated WebSocket handshake    │        │
-│  │  2. User joins room: session-{sessionId}     │        │
-│  │  3. Stream tokens live as they generate      │        │
-│  │  4. Send function-call indicators to UI      │        │
-│  └─────────────────────────────────────────────┘        │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│                 ULTRA-LOW LATENCY PIPELINE                  │
+│                                                             │
+│  1. Human      (Continuous Audio Stream)                    │
+│     Speaks ─────────────────────────┐                       │
+│                                     ▼                       │
+│                           ┌──────────────────┐              │
+│                           │ Speech-to-Text   │              │
+│                           │ (Deepgram Nova-2)│              │
+│                           └────────┬─────────┘              │
+│                                    │  < 150ms               │
+│                                    ▼                        │
+│                           ┌──────────────────┐              │
+│                           │ Engine / LLM     │              │
+│                           │ (gpt-4o-mini /   │              │
+│                           │  Groq Llama 3)   │              │
+│                           └────────┬─────────┘              │
+│   (Tokens streamed                 │  < 300ms (TTFT*)       │
+│    the moment they                 │                        │
+│    are generated)                  ▼                        │
+│                           ┌──────────────────┐              │
+│  4. AI Voice              │ Text-to-Speech   │              │
+│     Plays  ◄──────────────┤ (ElevenLabs /    │              │
+│                 < 300ms   │  Play.ht Turbo)  │              │
+│                           └──────────────────┘              │
+└─────────────────────────────────────────────────────────────┘
+* TTFT = Time To First Token
 ```
 
-## ⚡ Integration Strategy: API-Based, Not Self-Hosted
-For 95% of clients, we do not fine-tune or self-host models simply because it is too expensive and complex to maintain. 
+## 🧠 Core Engineering Principles for Voice
 
-Instead, we use heavily prompted, external APIs with **RAG (Retrieval-Augmented Generation)** to ground the model in the client's custom data.
+### 1. Streaming vs. Batching (Crucial)
+We NEVER wait for the LLM to write the whole paragraph before generating audio.
+- The LLM streams tokens exactly like ChatGPT does on the web.
+- The moment the LLM types the first punctuation mark (e.g., "Hello,"), that single word is immediately sent to ElevenLabs to render the audio.
+- While ElevenLabs is playing "Hello," the LLM is finishing the rest of the sentence in the background.
 
-### Cost Example (1000 Users)
-- **STT:** Deepgram = ~$0.0043/min
-- **LLM:** GPT-4o-mini = ~$0.15 / 1M Input Tokens
-- **TTS:** ElevenLabs = ~$0.06/1000 chars
+### 2. Provider Selection for Speed over Brilliance
+A phone receptionist does not need to write python code. It needs to say "Yes, we are open until 5 PM" instantly.
+- **LLM:** We use `gpt-4o-mini` or Groq (Llama-3). We do *not* use `gpt-4` for Voice Agents due to the latency penalty.
+- **STT:** Deepgram is preferred over OpenAI Whisper due to its real-time streaming capabilities and endpointing (detecting when the user stops talking).
 
-*Average interaction cost: < $0.05. You can markup this cost 10x when billing clients on a retainer.*
+### 3. Interruption Handling (Barge-in)
+Humans talk over each other. The system must support "Barge-in".
+- When Deepgram detects user audio, a kill-signal is sent via WebSocket to stop the ElevenLabs audio playback immediately.
+- The LLM context window is updated to reflect that the bot was cut off mid-sentence.
+
+## 🛠️ The Agency Stack Recommendation
+While it's possible to build this websocket orchestration from scratch using Node.js, **we highly advise utilizing a managed Voice platform** to handle the telephony and websocket orchestration.
+
+**Agency Preferred Stack:**
+- **Telephony / Orchestration:** Vapi.ai or Bland AI
+- **Phone Numbers:** Twilio (Imported via SIP trunk to Vapi)
+- **Functions/Webhooks:** Make.com (Triggered by Vapi on call completion)
